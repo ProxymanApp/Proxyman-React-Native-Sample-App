@@ -9,6 +9,8 @@ This project shows practical examples of:
 - Configuring iOS/Android to work with Proxyman
 - Capturing and analyzing network traffic during development
 
+![Capture HTTPS traffic on iOS Simulator React Native with Proxyman](img/capture-ios.jpg)
+
 ## Getting Started
 
 ### Prerequisites
