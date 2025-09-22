@@ -16,6 +16,19 @@ This project shows practical examples of:
 - React Native development environment set up
 - iOS Simulator or Android Emulator
 
+### Setting up Android Emulator
+
+1. Open Android Studio
+2. Go to **Tools** → **AVD Manager**
+3. Click **Create Virtual Device**
+4. Select **Phone** category and choose **Pixel 9**
+5. Click **Next**
+6. Select a system image with **Google APIs** (recommended: latest stable version)
+7. Click **Next**
+8. Name your AVD (e.g., "Pixel_9_API_34")
+9. Click **Finish**
+10. Start the emulator by clicking the **Play** button
+
 ### Installation
 
 1. Install dependencies
@@ -36,16 +49,24 @@ This project shows practical examples of:
 
 ### For iOS Simulator
 1. Open Proxyman
-2. Go to **Certificate** → **Install Certificate on iOS Simulator**
-3. Restart your iOS Simulator
+2. Go to **Certificate** → **Install Certificate on iOS -> Simulator**
+3. Follow the setup wizard
 4. The app's HTTPS traffic will now be visible in Proxyman
 
+![Capture HTTPS traffic on iOS Simulator React Native with Proxyman](img/capture-ios.jpg)
+
 ### For Android Emulator
+Please refer Setting up Android Emulator section above to know how to create an Android Emulator with Google APIs.
+
+Note: Google Play Store version is not supported yet.
+
 1. Open Proxyman
-2. Go to **Certificate** → **Install Certificate on Android Emulator**
+2. Go to **Certificate** → **Install Certificate on Android -> Emulator**
 3. Follow the setup wizard
 4. Restart your Android Emulator
 5. The app's HTTPS traffic will now be visible in Proxyman
+
+![Capture HTTPS traffic on Android Emulator React Native with Proxyman](img/capture-android.jpg)
 
 ### For Physical Devices
 1. Configure your device to use your Mac as HTTP proxy
