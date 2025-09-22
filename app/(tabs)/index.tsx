@@ -1,98 +1,157 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Button, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [responseLog, setResponseLog] = useState<string>('Console ready. Click any button to start testing HTTP requests.');
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeRequest, setActiveRequest] = useState<string>('');
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+  const generateRandomQuery = () => {
+    const randomId = Math.floor(Math.random() * 1000);
+    const randomParam = Math.random().toString(36).substring(7);
+    return `?id=${randomId}&param=${randomParam}&timestamp=${Date.now()}`;
+  };
+
+  const makeRequest = async (method: string, endpoint: string) => {
+    setIsLoading(true);
+    setActiveRequest(method);
+    setResponseLog(`Making ${method} request to ${endpoint}...`);
+    
+    try {
+      const url = endpoint + (method === 'GET' ? generateRandomQuery() : '');
+      const options: RequestInit = {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      if (method !== 'GET') {
+        options.body = JSON.stringify({
+          message: `Hello from ${method} request!`,
+          timestamp: new Date().toISOString(),
+          randomData: Math.random().toString(36).substring(7),
+          method: method,
+        });
+      }
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+      
+      const logMessage = `\n=== ${method} REQUEST COMPLETED ===\nURL: ${url}\nStatus: ${response.status} ${response.statusText}\nResponse Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}\n\nResponse Body:\n${JSON.stringify(data, null, 2)}\n\n${'='.repeat(50)}`;
+      
+      setResponseLog(logMessage);
+      console.log(`${method} Response:`, data);
+      
+    } catch (error) {
+      const errorMessage = `\n=== ${method} REQUEST FAILED ===\nError: ${error instanceof Error ? error.message : 'Unknown error'}\nTimestamp: ${new Date().toISOString()}\n\n${'='.repeat(50)}`;
+      setResponseLog(errorMessage);
+      console.error(`${method} Error:`, error);
+    } finally {
+      setIsLoading(false);
+      setActiveRequest('');
+    }
+  };
+
+  const handleGetRequest = () => makeRequest('GET', 'https://httpbin.proxyman.app/get');
+  const handlePostRequest = () => makeRequest('POST', 'https://httpbin.proxyman.app/post');
+  const handlePutRequest = () => makeRequest('PUT', 'https://httpbin.proxyman.app/put');
+  const handleUpdateRequest = () => makeRequest('PATCH', 'https://httpbin.proxyman.app/patch');
+
+  return (
+    <ThemedView style={styles.container}>
+      <ThemedView style={styles.header}>
+        <ThemedText type="title">HTTP Request Tester</ThemedText>
+        <ThemedText style={styles.subtitle}>Test different HTTP methods with httpbin.proxyman.app</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+      
+      <ThemedView style={styles.buttonContainer}>
+        <Button 
+          title={isLoading && activeRequest === 'GET' ? "Making GET Request..." : "GET Request"}
+          onPress={handleGetRequest}
+          disabled={isLoading}
+          color="#007AFF"
+        />
+        <Button 
+          title={isLoading && activeRequest === 'POST' ? "Making POST Request..." : "POST Request"}
+          onPress={handlePostRequest}
+          disabled={isLoading}
+          color="#007AFF"
+        />
+        <Button 
+          title={isLoading && activeRequest === 'PUT' ? "Making PUT Request..." : "PUT Request"}
+          onPress={handlePutRequest}
+          disabled={isLoading}
+          color="#007AFF"
+        />
+        <Button 
+          title={isLoading && activeRequest === 'PATCH' ? "Making UPDATE Request..." : "UPDATE (PATCH)"}
+          onPress={handleUpdateRequest}
+          disabled={isLoading}
+          color="#007AFF"
+        />
       </ThemedView>
-    </ParallaxScrollView>
+
+      <ThemedView style={styles.consoleContainer}>
+        <ThemedText type="defaultSemiBold" style={styles.consoleHeader}>Console Output</ThemedText>
+        <ScrollView style={styles.consoleScroll} showsVerticalScrollIndicator={true}>
+          <Text style={styles.consoleText}>{responseLog}</Text>
+        </ScrollView>
+      </ThemedView>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    padding: 20,
+    paddingTop: Platform.select({
+      ios: 60,
+      android: 40,
+      default: 40,
+    }),
+  },
+  header: {
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 30,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  subtitle: {
+    marginTop: 8,
+    opacity: 0.7,
+    textAlign: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  buttonContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  consoleContainer: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  consoleHeader: {
+    backgroundColor: '#333',
+    color: '#fff',
+    padding: 12,
+    fontSize: 14,
+  },
+  consoleScroll: {
+    flex: 1,
+    padding: 12,
+  },
+  consoleText: {
+    fontSize: 12,
+    fontFamily: Platform.select({
+      ios: 'Courier',
+      android: 'monospace',
+      default: 'monospace',
+    }),
+    color: '#00ff00',
+    lineHeight: 16,
   },
 });

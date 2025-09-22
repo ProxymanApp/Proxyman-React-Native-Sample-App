@@ -1,50 +1,71 @@
-# Welcome to your Expo app 👋
+# Capturing HTTPS Traffic from React Native iOS and Android with Proxyman
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This sample React Native app demonstrates how to capture HTTPS traffic on both iOS and Android devices using Proxyman.
 
-## Get started
+## Overview
+
+This project shows practical examples of:
+- Making HTTPS requests from React Native
+- Configuring iOS/Android to work with Proxyman
+- Capturing and analyzing network traffic during development
+
+## Getting Started
+
+### Prerequisites
+- [Proxyman](https://proxyman.io/) installed on your Mac
+- React Native development environment set up
+- iOS Simulator or Android Emulator
+
+### Installation
 
 1. Install dependencies
-
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. Run the app on your preferred platform:
    ```bash
-   npx expo start
+   # For iOS
+   npm run ios
+   
+   # For Android
+   npm run android
    ```
 
-In the output, you'll find options to open the app in a
+## Proxyman Setup
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### For iOS Simulator
+1. Open Proxyman
+2. Go to **Certificate** → **Install Certificate on iOS Simulator**
+3. Restart your iOS Simulator
+4. The app's HTTPS traffic will now be visible in Proxyman
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### For Android Emulator
+1. Open Proxyman
+2. Go to **Certificate** → **Install Certificate on Android Emulator**
+3. Follow the setup wizard
+4. Restart your Android Emulator
+5. The app's HTTPS traffic will now be visible in Proxyman
 
-## Get a fresh project
+### For Physical Devices
+1. Configure your device to use your Mac as HTTP proxy
+2. Install Proxyman's certificate on your device
+3. Trust the certificate in device settings
 
-When you're ready, run:
+## Sample Network Requests
 
-```bash
-npm run reset-project
-```
+The app includes examples of:
+- GET requests to public APIs
+- POST requests with JSON data
+- Requests with custom headers
+- Error handling scenarios
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Blog Post
 
-## Learn more
+This code accompanies the Proxyman blog post: "How to Capture HTTPS Traffic from React Native iOS and Android"
 
-To learn more about developing your project with Expo, look at the following resources:
+## Resources
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Proxyman Documentation](https://docs.proxyman.io/)
+- [React Native Network Guide](https://reactnative.dev/docs/network)
+- [Expo Development](https://docs.expo.dev/)
